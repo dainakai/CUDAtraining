@@ -5,10 +5,10 @@
 #include <stdio.h>
 #include <cufft.h>
 
-const char* input_data_file ="face_padding2.bmp"; //input file name
+const char* input_data_file ="00000.bmp"; //input file name
 const char* output_data_file1 ="outputH.bmp"; //output data file
 const char* output_data_file2 ="outputFFT-IFFT.bmp"; //output data file
-const int data_long=1024; //length of data
+const int data_long=512; //length of data
 
 unsigned char header_buf[1078];
 unsigned char image_in[data_long][data_long];
@@ -145,4 +145,5 @@ int main()
 	cufftDestroy(plan);
 	cudaFree(dev);
 	free(host);
+    cudaDeviceReset();
 }
