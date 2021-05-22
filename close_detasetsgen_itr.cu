@@ -28,16 +28,16 @@ using namespace std;
 
 //Confirm ref image when you change width or height
 const char* ref_img_path = "./1024.bmp";
-const char* output_image_name = "output_holo.bmp";
-const char* output_dir = "./holograms/close";
+const char* output_dir = "./holograms/close_holo";
+char output_dir_num[100];
 unsigned char header_buf[1078];
 char output_path[100];
 
 const int height = 1024;
 const int width = 1024;
 const int depth = 2048;
-const int particle_num = 4;
-const int image_count = 10;
+const int particle_num = 15;
+const int image_count = 1000;
 
 //All units provided by micro meter
 const float mean_diam = 50.0;
@@ -101,8 +101,9 @@ int main(int argc, char** argv){
     CHECK(cudaMalloc((void **)&devc_hologram, sizeof(cufftComplex)*width*height)); 
     CHECK(cudaMalloc((void **)&devc_trans, sizeof(cufftComplex)*width*height));
 
-    sprintf(output_path,"%s/%05d",output_dir,image_count);
-    mkdir(output_path, S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH);
+    sprintf(output_dir_num,"%s/num_%05d/",output_dir,particle_num);
+    printf("%s\n",output_dir_num);
+    mkdir(output_dir_num, S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH);
     srand((unsigned int)time(NULL));
 
     for(int count = 0; count < image_count; count++){
@@ -157,11 +158,14 @@ int main(int argc, char** argv){
             }
         }
 
-        sprintf(output_path, "%s/%05d.bmp",output_dir,count);
+        sprintf(output_path, "%s/%05d.bmp",output_dir_num,count);
         fp = fopen(output_path, "wb");
         fwrite(header_buf, sizeof(unsigned char), 1078, fp);
         fwrite(image_out, sizeof(unsigned char), width*height, fp);
         fclose(fp);
+
+        printf("\n\n");
+
     }
 
     free(host_particle_info);
